@@ -1,0 +1,13 @@
+.idea
+.DS_Store
+
+__pycache__
+.devbox
+.venv
+
+storage/*/*
+!/storage/public/sample.xlsx
+
+devbox.json
+devbox.lock
+LICENSE
