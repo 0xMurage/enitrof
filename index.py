@@ -1,13 +1,13 @@
 import os
 from pathlib import Path
 import time
+import uuid
 from quart import Quart, render_template, request, flash, redirect, url_for, send_file
 from werkzeug.utils import secure_filename
 from qrcode.constants import ERROR_CORRECT_L
 from vcard_qr_generator import main
 
 app = Quart(__name__)
-app.secret_key = 'your_secret_key_here'
 
 
 # Check if file extension is allowed
@@ -129,5 +129,6 @@ def prepare_drive():
 
 if __name__ == '__main__':
     prepare_drive()
+    app.secret_key= os.getenv("SESSION_SECRET", str(uuid.uuid4()))
     app.run(debug=os.getenv("DEBUG", False),
             port=os.getenv('PORT', 8000), host=os.getenv("HOST", '0.0.0.0'))
