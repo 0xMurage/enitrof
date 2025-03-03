@@ -90,6 +90,30 @@ async def download_file(filename: str):
     return await send_file(file_path, as_attachment=True)
 
 
+@app.after_serving
+async def backrgound_tasks():
+    app.add_background_task(storage_cleanup)
+
+
+# storage_cleanup: cleanup old files in storage drive.
+def storage_cleanup(threshold_time=3600):
+    current_time = time.time()
+    # files to exclude
+    excluded_files = [
+        os.path.join(storage_paths()['public'], 'sample.xlsx')
+    ]
+
+    for root, dirs, files in os.walk('storage'):
+        for file in files:
+            file_path = os.path.join(root, file)
+            file_mod_time = os.path.getmtime(file_path)
+
+            # Check if the file is older than set time above
+            if file_path not in excluded_files and (current_time - file_mod_time) > threshold_time:
+                # Delete the file
+                os.remove(file_path)
+
+
 def storage_paths():
     return {
         "public": "storage/public",
