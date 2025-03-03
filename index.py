@@ -129,4 +129,5 @@ def prepare_drive():
 
 if __name__ == '__main__':
     prepare_drive()
-    app.run(debug=True)
+    app.run(debug=os.getenv("DEBUG", False),
+            port=os.getenv('PORT', 8000), host=os.getenv("HOST", '0.0.0.0'))
