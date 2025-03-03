@@ -1,7 +1,9 @@
 import os
 from pathlib import Path
 import time
+import shutil
 import uuid
+from typing import List
 from quart import Quart, render_template, request, flash, redirect, url_for, send_file
 from werkzeug.utils import secure_filename
 from qrcode.constants import ERROR_CORRECT_L
@@ -90,28 +92,42 @@ async def download_file(filename: str):
     return await send_file(file_path, as_attachment=True)
 
 
-@app.after_serving
-async def backrgound_tasks():
-    app.add_background_task(storage_cleanup)
+def delete_old_files(base_path: str, threshold_time: int, excluded_files: List[str]):
+    cut_off_time = time.time() - threshold_time
+
+    for root, dirs, files in os.walk(base_path):
+        for file in files:
+            file_path = os.path.join(root, file)
+            file_mod_time = os.path.getmtime(file_path)
+            try:
+                # Check if the file is older than set time above
+                if file_path not in excluded_files and file_mod_time < cut_off_time:
+                    # Delete the file
+                    os.remove(file_path)
+            except Exception as e:
+                print(f"Error deleting file {file_path}: {e}")
+
+        # process directories
+        for dir_name in dirs:
+            dir_path = os.path.join(root, dir_name)
+            try:
+                # Get directory modification time
+                dir_mtime = os.path.getmtime(dir_path)
+                if dir_mtime < cut_off_time:
+                    shutil.rmtree(dir_path)
+            except Exception as e:
+                print(f"Error deleting directory {dir_path}: {e}")
 
 
 # storage_cleanup: cleanup old files in storage drive.
 def storage_cleanup(threshold_time=3600):
-    current_time = time.time()
     # files to exclude
     excluded_files = [
         os.path.join(storage_paths()['public'], 'sample.xlsx')
     ]
 
-    for root, dirs, files in os.walk('storage'):
-        for file in files:
-            file_path = os.path.join(root, file)
-            file_mod_time = os.path.getmtime(file_path)
-
-            # Check if the file is older than set time above
-            if file_path not in excluded_files and (current_time - file_mod_time) > threshold_time:
-                # Delete the file
-                os.remove(file_path)
+    for key, path in storage_paths().items():
+        delete_old_files(path, threshold_time, excluded_files)
 
 
 def storage_paths():
