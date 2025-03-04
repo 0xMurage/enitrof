@@ -21,6 +21,7 @@ def allowed_file(filename):
 
 @app.route('/', methods=['GET'])
 async def index():
+    app.add_background_task(storage_cleanup)
     return await render_template('index.html')
 
 
