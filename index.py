@@ -144,12 +144,11 @@ def prepare_drive():
         path.mkdir(exist_ok=True, parents=True)
 
 
-def run() -> None:
-    app.secret_key= os.getenv("SESSION_SECRET", str(uuid.uuid4()))
-    prepare_drive()
-    app.run(debug=os.getenv("DEBUG", False),
-        port=os.getenv('PORT', 8000), host=os.getenv("HOST", '0.0.0.0'))
 
+# ooh yeah!
+app.secret_key= os.getenv("SESSION_SECRET", str(uuid.uuid4()))
+prepare_drive()
 
 if __name__ == '__main__':
-    run()
+    app.run(debug=os.getenv("DEBUG", False),
+    port=os.getenv('PORT', 8000), host=os.getenv("HOST", '0.0.0.0'))
