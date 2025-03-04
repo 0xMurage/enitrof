@@ -11,3 +11,6 @@ storage/*/*
 devbox.json
 devbox.lock
 LICENSE
+
+compose.yaml
+dockerfile

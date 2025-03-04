@@ -1,7 +1,6 @@
 services:
   qriod:
     image: '${APP_IMAGE?}'
-    command: 'hypercorn --bind 0.0.0.0:${APP_PORT?} index:app'
     expose:
       - ${APP_PORT?}
     restart: unless-stopped
