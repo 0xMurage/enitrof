@@ -47,8 +47,6 @@ def build_vcard(row):
 
 
 def generate_vcard_images(rows, output_dir: str, options: dict):
-    qr_size = 1
-    qr_border = 1
 
     # Process each row
     for index, row in rows:
