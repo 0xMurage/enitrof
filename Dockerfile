@@ -8,4 +8,4 @@ RUN pip install -r requirements.txt
 
 COPY . .
 
-CMD ["hypercorn","index:run"]
+CMD ["python","index:run"]
