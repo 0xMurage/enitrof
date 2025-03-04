@@ -2,13 +2,13 @@ services:
   qriod:
     image: '${APP_IMAGE?}'
     expose:
-      - ${PORT?}
+      - ${APP_PORT?}
     restart: unless-stopped
     init: true
     networks:
       - gateway_proxy
     environment:
-      PORT: ${PORT?}
+      PORT: ${APP_PORT?}
     labels:
       - traefik.enable=true
       - traefik.docker.network=gateway_proxy
