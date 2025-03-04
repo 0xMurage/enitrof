@@ -1,0 +1,21 @@
+services:
+  qriod:
+    image: '${APP_IMAGE?}'
+    expose:
+      - ${PORT?}
+    restart: unless-stopped
+    init: true
+    networks:
+      - gateway_proxy
+    environment:
+      PORT: ${PORT?}
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=gateway_proxy
+      - traefik.http.routers.qriod.rule=HOST(`${APP_HOST?}`)
+      - traefik.http.routers.qriod.tls=true
+      - traefik.http.routers.qriod.entrypoints=secure-web
+
+networks:
+  gateway_proxy:
+    external: true
